@@ -1,4 +1,4 @@
-import api from './api';
+import api from './api';//importando api criada
 
 class App {
     constructor() {
@@ -14,7 +14,7 @@ class App {
         this.formEl.onsubmit = event => this.addRepository(event); //passando o evento da form para addrepository, event = clickou no botão 'Adiconar'
     }
 
-    setLoading( loading = true ) {
+    setLoading( loading = true ) { //criando uma mensagem de 'carregando...' enquanto estiver pegando os dados da API
         if(loading === true){            
             let loadEl = document.createElement('span');
             loadEl.appendChild(document.createTextNode('Carregando...'));
@@ -35,7 +35,7 @@ class App {
             return;
         
         try{ 
-            this.setLoading();//chamando função carregando
+            this.setLoading();//chamando função 'carregando' para informar ao usuario q esta esperando a resposta do github
             const response = await api.get(`/repos/${repoInput}`);
 
             const { name, description, html_url, owner:{avatar_url} } = response.data; //desetruturando o os dados da api
@@ -50,7 +50,7 @@ class App {
         }catch(err){ // envia um erro se nao encotrar resposta para a busca do repositório
             alert('O repositorio não existe!');
         }
-        this.setLoading(false);//desligando função carregando
+        this.setLoading(false);//desligando função carregando (ve encima o q ela faz)
         this.inputEl.value = ''; //zerando  o campo do imput onde fica o texto
     }
 

@@ -10,7 +10,7 @@ class list{ // classe pai
 
 class TodoList extends list{ //classe filha (herda todos os metodos da pai(list))
     constructor(){
-        super();
+        super();    //chamar o constrctor da classe pai
         this.usuario = 'Dudu';
     }
 
