@@ -1,0 +1,106 @@
+1 - ES6 / ecmascript (2015)
+            Conjunto de regras e normas que formulam e atualizam novas funcionalidades do javaScript todo ano.
+            Na verdade são novas formas de fazer um codigo, com uma sintaxe mais fácil
+2 - BABEL
+            Pega um código de um funcionalidade nova, e transformar de uma forma q todos os navegares entendam.
+            Fazer com que as features ES6,ES7 e ES8, sejam traduzidas para q todos os navegadores entendam.
+3- WEBPAck
+            Um servidor para consiguir ter, pox exemplo, um liveReload, atualizar um javascript sem precisar da
+            F5, quando o codigo for mudado. Sempre que o codigo for atualizado, sempre fazer sua conversão para
+            o Babel, sem precisar ficar rodando o comando babel várias vezes.
+4 - Instalando Node & Yarn
+    4.1 NodeJs:
+        curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+        Testando: node -v
+    4.2 Yarn:   //eh um grenciador de pacotes do JavaScrip. utilizado para instalar ferramentas de terceiros, para o projeto.
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+        echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+        sudo apt-get update && sudo apt-get install yarn
+        testando: yarn -v
+5 - Na raiz do projeto, executar:
+        yarn init // da enter para todas as perguntas 
+            // Vai armazenar todas as dependecias da aplicação num arquivo package.json
+    5.1 - yarn add @babel/cli //primeira dependência
+            //Essa dependencia serve para executar o babel por linhas de comando(terminal)
+    5.2 - yarn add @babel/preset-env 
+    5.3 - yarn add @babel/core //nucleo de comandos do babel
+6 - ".gitignore" - e colocar a pasta nodule_Module
+7 - Configurar o babel: 
+    7.2 - criar um arquivo chamado ".babelrc", com o seguinte conteudo:
+            {
+                "presets": ["@babel/preset-env"] //uma dos presets do babel, q faz o babel entender que o ambiente q está trabalhando, no caso o navegador
+                                                 //e converter todas as features do ES para q o NAVEGADOR. (alem do navegador, pode ser mobile, node(back-end), etc) 
+            }
+8 - no package.json, criar uma nova proriedade:
+            {
+                "script":{  //estabelecer comandos pre estabelecidos para executar na linha de comando
+                    "dev": "babel ./main.js - o bundle.js"      //yarn dev (chama o babel e converter o codigo main(com todas as features ES)
+                                                                //  em bundle.js(codigo    universal))
+            }
+    8.1 - modificar script dev para ficar monitorando automaticamente o codigo do main, para sempre converte-lo no bundle quando ouver alteração no main, sem ficar  
+       digitando o codigo 'yarn dev' direto
+           "dev": "babel ./main.js - o bundle.js -w"    //o '-w' faz isso acima
+
+9 - Todas as dependencias do arquivo package.json, do babel, são dependencias para o ambiente do desenvolvimento, e nao no de produção, o online, pois no online, só o 
+     bundle intressa. Então no package.json, muda;
+    9.1 - "dependencies" muda para "devDependencies"
+10 - Configurar o WEPPACK = Serviço que disponibiliza uma forma de trabalhar com varios aquivos js(nao só JS, mas css, imagens, html);
+    10.1 - yarn add webpack webpack-cli -D//instalando webpack / '-D' instala as dependicas como de desenvolvedores"devDependencies"
+11 - Cria arquivo de configuração do webpack, na pasta raiz:
+    11.1 - webpack.config.js
+    11.2 - dentro desse arquivo:
+            module.exports = {
+                entry: './main.js',
+                output:{
+                    path: __dirname,
+                    filename: 'bundle.js'
+                },
+            module:{        
+                rules:[ //COmo o webpack deve se comportar quando o usuario estiver tentando exportar novos arquivos js
+                   { //qual o loader vai utilizar: forma de manipular um arquivo e fazer alguma alteração, usaremos o BABEL
+                        test: /\.js$/,           // '/.' -> qualquer caractere a esquerda
+                        exclude: /node_modules/,
+                        use: 'babel-loader',
+                   }
+                ],
+           }
+    11.3 - yarn add babel-loader -D
+12- Instalando plugin para trabalhar com REST & SPREAD, pois a versão base do babel, nao suporta:
+    12.1 - yarn add @babel/plugin-proposal-object-rest-spread
+    12.1 - no .babelrc, abaixo do campo "presets", colocar:
+            "plugins": ["@babel/plugin-proposal-object-rest-spread",]
+12 - Executando o webPack
+    12.1 - no arquivo package.json, no "scripts" - "dev", trocar o conteudo por:
+            "webpack --mode==development -w"
+13 - criando novas pastas no diretorio raiz:
+    13.1 - public = todos os arquivos q nao precisam ser mmonitorados peelo webpack (index.html, bundle.js)
+    13.2 - src = toddo codigo js que sera usado na aplicação, vao ser monitorados pelo webpack (main.js)
+    13.3 - Em webpack.config.js, novo valor de entry:'./src/main.js'
+    13.4 - ainda em webpack.config.js, path: __dirname + '/public'
+14 - Instalando webserver: // serve para da um refresh no arquivo sem precisa fazer f5, toda vez q há alteração na pasta src.
+    14.1 - yarn add webpack-dev-server -D
+    14.2 - No aarquivo webpack.config.js, antes do module, colocar esse objeto:
+            devServer:{
+                contentBase: __dirname + '/public',     //arquivo onde rodarar o servidor, que sera mostrado o endereço do serv. quando o comando abaixo for executado
+            }
+    14.3 - no arquivo package.json, alterar o script.dev:
+            "webpack-dev-server --mode=development"     o webpack server automaticamente embute o conteudo gerado pelo babel
+    14.4 - Gerar arquivo bundle.js(BABEL) => adicionar uma script abaixo do scripr "dev":
+            "build": webpack --mode=production"
+           E rodar no terminal:
+             yarn build
+           O bundle.js será gerado
+15 - Trabalhando com async awayt(nao funcional do ES6) precisa de algumas ferramentas extras, pelo terminal:
+    15.1 - yarn add @babel/pugin-transform-async-to-generator -D    //plugin do babel pois a versao base do babel nao possui essa funcionalidade
+    15.2 - yarn add @babel/polyfill -D
+    15.3 - no arquivo .babelrc colocar uma linha no campo plugin:
+             "@babel/pugin-transform-async-to-generator"
+    15.4 - no arquivo webpack.config.js no campo entry, modificar:
+             ['@babel/polyfill', './src/main.js'], //carrega o polyfill antes do main.js (ver polyfill na pagina do desenvolvedor)
+16 - Utilizando a Biblioteca AXIOS, da acesso a uma API, para trabalhar com requisições assíncronas, protocolos http, servidores BAck-End, outras APis:
+    16.1 - Instalando o axios:
+            yarn add axios
+    16.2 - fazer o import em api.js:
+            import axios from 'axios';  
+ 
